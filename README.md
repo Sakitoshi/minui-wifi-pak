@@ -10,6 +10,7 @@ This pak is designed and tested on the following MinUI Platforms and devices:
 - `my282`: Miyoo A30
 - `my355`: Miyoo Flip
 - `rg35xxplus`: RG-35XX Plus, RG-34XX, RG-35XX H, RG-35XX SP
+- `trimuismart`: Trimui Smart (_not_ the Trimui Smart Pro)
 - `tg5040`: Trimui Brick (formerly `tg3040`), Trimui Smart Pro
 
 Use the correct platform for your device.
