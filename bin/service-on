@@ -20,7 +20,7 @@ main() {
     fi
 
     echo "Preparing to enable wifi..."
-    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "tg5040" ]; then
+    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "trimuismart" ] || [ "$PLATFORM" = "tg5040" ]; then
         SYSTEM_JSON_PATH="/mnt/UDISK/system.json"
         if [ "$PLATFORM" = "miyoomini" ]; then
             SYSTEM_JSON_PATH="/appconfigs/system.json"
@@ -31,6 +31,25 @@ main() {
         fi
         [ ! -f "$SYSTEM_JSON_PATH" ] && echo '{"wifi": 0}' >"$SYSTEM_JSON_PATH"
         [ ! -s "$SYSTEM_JSON_PATH" ] && echo '{"wifi": 0}' >"$SYSTEM_JSON_PATH"
+
+        # initialize wifi card
+        # borrowed from /etc/init.d/wpa_supplicant
+        if [ "$PLATFORM" = "trimuismart" ]; then
+            INITCONF=$(devmem 0x01C20824 32)
+            INITCONF=$(printf '0x%08X\n' "$(( INITCONF & 0xFFFFF0FF ))")
+            INITCONF=$(printf '0x%08X\n' "$(( INITCONF | 0x00000100 ))")
+            devmem 0x01c20824 32 $INITCONF
+            sleep 0.5
+            INITCONF=$(devmem 0x01C20834 32)
+            INITCONF=$(printf '0x%08X\n' "$(( INITCONF & 0xFFFFFFFB ))")
+            INITCONF=$(printf '0x%08X\n' "$(( INITCONF | 0x00000004 ))")
+            devmem 0x01c20834 32 $INITCONF
+            sleep 1
+            echo 0 > /proc/driver/sunxi-mmc.1/insert
+            sleep 0.5
+            echo 1 > /proc/driver/sunxi-mmc.1/insert
+            sleep 0.5
+        fi
 
         if [ -x /usr/trimui/bin/systemval ]; then
             /usr/trimui/bin/systemval wifi 1
@@ -68,7 +87,7 @@ main() {
 
         /customer/app/wpa_cli -i wlan0 reconnect
         iw dev wlan0 set power_save off
-    elif [ "$PLATFORM" = "tg5040" ]; then
+    elif [ "$PLATFORM" = "trimuismart" ] || [ "$PLATFORM" = "tg5040" ]; then
         killall -15 wpa_supplicant || true
         killall -15 udhcpc || true
         ifconfig wlan0 up || true

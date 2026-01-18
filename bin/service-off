@@ -20,7 +20,7 @@ main() {
     fi
 
     echo "Preparing to disable wifi..."
-    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "tg5040" ]; then
+    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "trimuismart" ] || [ "$PLATFORM" = "tg5040" ]; then
         SYSTEM_JSON_PATH="/mnt/UDISK/system.json"
         if [ "$PLATFORM" = "miyoomini" ]; then
             SYSTEM_JSON_PATH="/appconfigs/system.json"
@@ -64,6 +64,12 @@ main() {
             echo "Blocking wireless..."
             rfkill block wifi 2>/dev/null || true
         fi
+    fi
+
+    # unplug wifi card on trimui smart
+    if [ "$PLATFORM" = "trimuismart" ]; then
+        echo 0 > /proc/driver/sunxi-mmc.1/insert
+        sleep 0.5
     fi
 
     if [ -f /customer/app/axp_test ]; then
