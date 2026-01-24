@@ -77,7 +77,7 @@ main() {
     fi
 
     template_file="$PAK_DIR/res/wpa_supplicant.conf.tmpl"
-    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ]; then
+    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "trimuismart" ]; then
         template_file="$PAK_DIR/res/wpa_supplicant.conf.$PLATFORM.tmpl"
     fi
     cp "$template_file" "$PAK_DIR/res/wpa_supplicant.conf"

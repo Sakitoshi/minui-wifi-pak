@@ -247,7 +247,7 @@ write_config() {
 
     echo "Generating wpa_supplicant.conf"
     template_file="$PAK_DIR/res/wpa_supplicant.conf.tmpl"
-    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ]; then
+    if [ "$PLATFORM" = "miyoomini" ] || [ "$PLATFORM" = "my282" ] || [ "$PLATFORM" = "my355" ] || [ "$PLATFORM" = "trimuismart" ]; then
         template_file="$PAK_DIR/res/wpa_supplicant.conf.$PLATFORM.tmpl"
     fi
 
@@ -333,7 +333,7 @@ write_config() {
         if [ "$has_passwords" = false ]; then
             rm -f /etc/netplan/01-netcfg.yaml
         fi
-    elif [ "$PLATFORM" = "tg5040" ]; then
+    elif [ "$PLATFORM" = "trimuismart" ] || [ "$PLATFORM" = "tg5040" ]; then
         cp "$PAK_DIR/res/wpa_supplicant.conf" /etc/wifi/wpa_supplicant.conf
     else
         show_message "$PLATFORM is not a supported platform" 2

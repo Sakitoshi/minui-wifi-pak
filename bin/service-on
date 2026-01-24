@@ -87,7 +87,25 @@ main() {
 
         /customer/app/wpa_cli -i wlan0 reconnect
         iw dev wlan0 set power_save off
-    elif [ "$PLATFORM" = "trimuismart" ] || [ "$PLATFORM" = "tg5040" ]; then
+    elif [ "$PLATFORM" = "trimuismart" ]; then
+        killall -15 wpa_supplicant || true
+        killall -15 udhcpc || true
+        ifconfig wlan0 up || true
+        wpa_supplicant -B -D nl80211 -iwlan0 -c /etc/wifi/wpa_supplicant.conf >/tmp/wpa_supplicant.log
+        cat /tmp/wpa_supplicant.log
+        if grep -q "Delete '/var/run/wpa_supplicant' manually if it is not used anymore" /tmp/wpa_supplicant.log; then
+            killall -15 wpa_supplicant
+            rm -f /var/run/wpa_supplicant
+            wpa_supplicant -B -D nl80211 -iwlan0 -c /etc/wifi/wpa_supplicant.conf
+        fi
+        rm -f /tmp/wpa_supplicant.log
+
+        if ! pgrep wpa_supplicant; then
+            echo "Failed to start wpa_supplicant"
+            return 1
+        fi
+        udhcpc -i wlan0 -n &
+    elif [ "$PLATFORM" = "tg5040" ]; then
         killall -15 wpa_supplicant || true
         killall -15 udhcpc || true
         ifconfig wlan0 up || true
